@@ -12,13 +12,13 @@ async fn main() -> anyhow::Result<()> {
     let app = app()?;
 
     let addr: SocketAddr = var("SOCKET_ADDR")
-        .expect("SOCKET_ADDR env not set")
+        .unwrap_or("0.0.0.0:8080".to_string())
         .parse()?;
     let listener = TcpListener::bind(addr).await?;
 
-    serve(listener, app.into_make_service()).await?;
-
     println!("Server runnnig at: {addr}");
+    
+    serve(listener, app.into_make_service()).await?;
 
     Ok(())
 }

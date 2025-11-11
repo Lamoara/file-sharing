@@ -51,7 +51,7 @@ pub fn app() -> anyhow::Result<Router> {
             header::ACCESS_CONTROL_ALLOW_ORIGIN,
         ]);
 
-    let app_state = Arc::new(AppState::load());
+    let app_state = Arc::new(AppState::load()?);
 
     let admin_router = Router::new()
         .route("/", get("Hello admin"))

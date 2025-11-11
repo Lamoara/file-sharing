@@ -13,10 +13,10 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub fn load() -> AppState {
-        AppState {
-            config: RwLock::new(AppConfig::load()),
-            data: RwLock::new(AppData::load()),
-        }
+    pub fn load() -> anyhow::Result<AppState> {
+        Ok(AppState {
+            config: RwLock::new(AppConfig::load()?),
+            data: RwLock::new(AppData::load()?),
+        })
     }
 }

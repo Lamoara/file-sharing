@@ -4,7 +4,7 @@ use askama::Template;
 use axum::{
     Form,
     extract::State,
-    http::{HeaderMap, HeaderValue, StatusCode},
+    http::{HeaderMap, HeaderValue},
     response::{Html, IntoResponse},
 };
 use axum_extra::extract::{

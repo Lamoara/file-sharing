@@ -1,5 +1,3 @@
-use std::{borrow::Cow, collections::HashMap};
-
 use axum::response::IntoResponse;
 
 use crate::{
@@ -11,8 +9,6 @@ pub async fn protected(
     _: AdminAuthSessionExtractor,
     translator: AppTranslator,
 ) -> impl IntoResponse {
-    let args = ArgMapBuilder::default()
-        .arg_str("name", "pepe")
-        .build();
+    let args = ArgMapBuilder::new().arg_str("name", "pepe").build();
     translator.tr_with("admin_hello", &args)
 }

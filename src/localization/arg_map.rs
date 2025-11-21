@@ -3,7 +3,9 @@ use std::{borrow::Cow, collections::HashMap};
 use fluent_bundle::FluentValue;
 
 #[derive(Debug, Default)]
-pub struct ArgMapBuilder<'a>{values: Vec<(String, FluentValue<'a>)>}
+pub struct ArgMapBuilder<'a> {
+    values: Vec<(String, FluentValue<'a>)>,
+}
 
 impl<'a> ArgMapBuilder<'a> {
     pub fn new() -> Self {

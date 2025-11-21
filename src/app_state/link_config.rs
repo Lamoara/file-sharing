@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LinkConfig {
-    subroute: String,
     file: String,
     description: Option<String>,
     hashed_password: Option<String>,
@@ -13,3 +12,6 @@ pub struct LinkConfig {
     allow_upload: bool,
     max_size_mb: Option<usize>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub struct LinkRoute (String);

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Iniciar sesión</h1>
+<form 
+    hx-post="/admin/login" 
+    hx-swap="innerHTML" 
+    hx-target="#login-result"
+>
+    <input type="text" name="username" placeholder="User" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Entrar</button>
+</form>
+
+<div id="login-result"></div>
+{% endblock %}

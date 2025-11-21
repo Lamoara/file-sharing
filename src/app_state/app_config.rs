@@ -3,14 +3,14 @@ use std::fs;
 use serde::{Deserialize, Serialize};
 use tracing::{debug, info};
 
-use crate::hasher::hash;
+use crate::hasher::{hash, verify_hash};
 
 static APP_CONFIG_ROUTE: &str = "app_config.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AppConfig {
     hashed_admin_username: String,
-    hashed_password: String,
+    hashed_admin_password: String,
 }
 
 impl AppConfig {
@@ -36,16 +36,27 @@ impl AppConfig {
         fs::write(APP_CONFIG_ROUTE, app_config_json)?;
         Ok(())
     }
-    pub fn change_username() {}
-    pub fn change_password() {}
-    pub fn validate_credentials() {}
+    pub fn change_username(&mut self, new_username: &str) -> anyhow::Result<()> {
+        self.hashed_admin_username = hash(new_username).map_err(anyhow::Error::msg)?.to_string();
+        self.save()?;
+        Ok(())
+    }
+    pub fn change_password(&mut self, new_password: &str) -> anyhow::Result<()> {
+        self.hashed_admin_password = hash(new_password).map_err(anyhow::Error::msg)?.to_string();
+        self.save()?;
+        Ok(())
+    }
+    pub fn validate_credentials(&self, username: &str, password: &str) -> bool {
+        verify_hash(username, &self.hashed_admin_username)
+            && verify_hash(password, &self.hashed_admin_password)
+    }
 }
 
 impl Default for AppConfig {
     fn default() -> Self {
         Self {
             hashed_admin_username: hash("admin").unwrap(),
-            hashed_password: hash("admin").unwrap(),
+            hashed_admin_password: hash("admin").unwrap(),
         }
     }
 }

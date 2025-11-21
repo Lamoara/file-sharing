@@ -17,7 +17,7 @@ async fn main() -> anyhow::Result<()> {
     let listener = TcpListener::bind(addr).await?;
 
     println!("Server runnnig at: {addr}");
-    
+
     serve(listener, app.into_make_service()).await?;
 
     Ok(())

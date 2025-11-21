@@ -3,13 +3,19 @@ use std::sync::Arc;
 use axum::{
     Router,
     http::{HeaderValue, Method, header},
-    routing::get,
+    routing::{get, post},
 };
 use dotenvy::var;
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 use tracing_subscriber::{EnvFilter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
 
-use crate::app_state::AppState;
+use crate::{
+    app_state::AppState,
+    routes::{
+        admin_login::{login_form, login_page},
+        protected::protected,
+    },
+};
 
 pub fn app() -> anyhow::Result<Router> {
     tracing_subscriber::registry()
@@ -54,16 +60,16 @@ pub fn app() -> anyhow::Result<Router> {
     let app_state = Arc::new(AppState::load()?);
 
     let admin_router = Router::new()
-        .route("/", get("Hello admin"))
+        .route("/", get(login_page))
+        .route("/login", post(login_form))
+        .route("/dashboard", get(protected))
         .layer(admin_cors_layer);
 
-    let users_router = Router::new()
-        .route("/", get("Hello user"))
-        .layer(users_cors_layer);
+    let users_router = Router::new().route("/", get("A")).layer(users_cors_layer);
 
     Ok(Router::new()
         .nest("/admin", admin_router)
-        .nest("/users", users_router)
+        .merge(users_router)
         .layer(trace_layer)
         .with_state(app_state))
 }

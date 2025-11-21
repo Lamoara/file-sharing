@@ -3,13 +3,13 @@ use std::{collections::HashMap, fs};
 use serde::{Deserialize, Serialize};
 use tracing::{debug, info};
 
-use crate::app_state::link_config::LinkConfig;
+use crate::app_state::link_config::{LinkConfig, LinkRoute};
 
 static APP_DATA_ROUTE: &str = "app_data.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AppData {
-    links: HashMap<String, LinkConfig>,
+    links: HashMap<LinkRoute, LinkConfig>,
 }
 
 impl AppData {

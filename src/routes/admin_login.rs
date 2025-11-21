@@ -13,7 +13,7 @@ use axum_extra::extract::{
 };
 use serde::Deserialize;
 
-use crate::app_state::AppState;
+use crate::{app_state::AppState, localization::app_translator::AppTranslator};
 
 #[derive(Template)]
 #[template(path = "login.html")]
@@ -21,14 +21,24 @@ struct AdminLoginTemplate {
     title: &'static str,
 }
 
-pub async fn login_page() -> Html<String> {
+pub async fn login_page(translator: AppTranslator) -> Html<String> {
+    print!("{translator:?}");
     let page = AdminLoginTemplate { title: "Login" };
     Html(page.render().unwrap())
 }
 
 #[derive(Template)]
 #[template(path = "invalid-credentials.html")]
-struct InvalidCredentialsTemplate;
+struct InvalidCredentialsTemplate<'a> {
+    error_msg: &'a str,
+}
+
+fn invalidCredentials(t: AppTranslator) -> Html<String> {
+    let tmpl = InvalidCredentialsTemplate {
+        error_msg: &t.tr("auth_invalidCredentials"),
+    };
+    Html(tmpl.render().unwrap())
+}
 
 #[derive(Deserialize)]
 pub struct LoginForm {
@@ -39,10 +49,10 @@ pub struct LoginForm {
 #[axum::debug_handler]
 pub async fn login_form(
     jar: CookieJar,
+    translator: AppTranslator,
     State(state): State<Arc<AppState>>,
     Form(form): Form<LoginForm>,
 ) -> impl IntoResponse {
-    print!("Loginnnn");
     match state.try_login(&form.username, &form.password).await {
         Ok(uuid) => {
             let cookie = Cookie::build(("session", uuid.to_string()))
@@ -59,6 +69,6 @@ pub async fn login_form(
 
             (headers, jar).into_response()
         }
-        Err(_) => (Html(InvalidCredentialsTemplate.render().unwrap()),).into_response(),
+        Err(_) => invalidCredentials(translator).into_response(),
     }
 }

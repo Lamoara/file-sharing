@@ -14,4 +14,4 @@ pub struct LinkConfig {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub struct LinkRoute (String);
+pub struct LinkRoute(String);

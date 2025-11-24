@@ -1,2 +1,2 @@
-pub(crate) mod admin_login;
-pub(crate) mod protected;
+pub(crate) mod admin;
+pub(crate) mod user;

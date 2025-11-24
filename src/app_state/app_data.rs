@@ -1,15 +1,21 @@
-use std::{collections::HashMap, fs};
+use std::{
+    collections::{HashMap, HashSet},
+    fs,
+    sync::Arc,
+};
 
 use serde::{Deserialize, Serialize};
 use tracing::{debug, info};
+use uuid::Uuid;
 
-use crate::app_state::link_config::{LinkConfig, LinkRoute};
+use crate::app_state::link::Link;
 
 static APP_DATA_ROUTE: &str = "app_data.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AppData {
-    links: HashMap<LinkRoute, LinkConfig>,
+    links: HashMap<String, Arc<Link>>,
+    files: HashSet<String>,
 }
 
 impl AppData {
@@ -23,6 +29,7 @@ impl AppData {
                 info!("{APP_DATA_ROUTE} not found, creating default AppData");
                 let app_data = AppData {
                     links: Default::default(),
+                    files: Default::default(),
                 };
                 info!("Saving new AppData");
                 app_data.save()?;
@@ -36,7 +43,17 @@ impl AppData {
         fs::write(APP_DATA_ROUTE, app_data_json)?;
         Ok(())
     }
-    pub fn add_link() {}
+
+    pub fn links(&self) -> Vec<Arc<Link>> {
+        self.links.values().cloned().collect()
+    }
+
+    pub fn add_link(&mut self, link_route: Option<String>, link: Link) -> Result<(), ()> {
+        let route = link_route.unwrap_or_else(|| Uuid::new_v4().to_string());
+        self.links.insert(route, Arc::new(link)); //TODO! Make proper errors
+        self.save().unwrap(); //TODO! Make proper errors
+        Ok(())
+    }
     pub fn remove_link() {}
     pub fn remove_links() {}
     pub fn update_link() {}

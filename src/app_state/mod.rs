@@ -3,12 +3,13 @@ use tokio::sync::RwLock;
 use crate::app_state::{
     app_config::AppConfig,
     app_data::AppData,
+    link::Link,
     sessions::{Id, Sessions},
 };
 
 pub(crate) mod app_config;
 pub(crate) mod app_data;
-pub(crate) mod link_config;
+pub(crate) mod link;
 pub(crate) mod sessions;
 
 #[derive(Debug)]
@@ -38,5 +39,9 @@ impl AppState {
         } else {
             Err(anyhow::Error::msg("Invalid credentials"))
         }
+    }
+
+    pub async fn create_link(&self, link_route: Option<String>, link: Link) -> Result<(), ()> {
+        self.data.write().await.add_link(link_route, link)
     }
 }

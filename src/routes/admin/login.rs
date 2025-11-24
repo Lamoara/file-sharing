@@ -33,7 +33,7 @@ struct InvalidCredentialsTemplate<'a> {
     error_msg: &'a str,
 }
 
-fn invalidCredentials(t: AppTranslator) -> Html<String> {
+fn invalid_credentials(t: AppTranslator) -> Html<String> {
     let tmpl = InvalidCredentialsTemplate {
         error_msg: &t.tr("auth_invalidCredentials"),
     };
@@ -69,6 +69,6 @@ pub async fn login_form(
 
             (headers, jar).into_response()
         }
-        Err(_) => invalidCredentials(translator).into_response(),
+        Err(_) => invalid_credentials(translator).into_response(),
     }
 }

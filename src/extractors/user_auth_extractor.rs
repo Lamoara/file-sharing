@@ -8,9 +8,9 @@ use axum::{
 use axum_extra::extract::CookieJar;
 use uuid::Uuid;
 
-use crate::app_state::{AppState, link_config::LinkRoute};
+use crate::app_state::AppState;
 
-pub struct UserAuthSessionExtractor(LinkRoute);
+pub struct UserAuthSessionExtractor(String);
 
 impl FromRequestParts<Arc<AppState>> for UserAuthSessionExtractor {
     type Rejection = Response;

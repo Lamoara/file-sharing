@@ -11,9 +11,9 @@ use tracing_subscriber::{EnvFilter, fmt, layer::SubscriberExt, util::SubscriberI
 
 use crate::{
     app_state::AppState,
-    routes::{
-        admin_login::{login_form, login_page},
-        protected::protected,
+    routes::admin::{
+        dashboard::{create_download_link, create_upload_link, dashboard},
+        login::{login_form, login_page},
     },
 };
 
@@ -62,7 +62,12 @@ pub fn app() -> anyhow::Result<Router> {
     let admin_router = Router::new()
         .route("/", get(login_page))
         .route("/login", post(login_form))
-        .route("/dashboard", get(protected))
+        .route("/dashboard", get(dashboard))
+        .route("/dashboard/create/upload-link", post(create_upload_link))
+        .route(
+            "/dashboard/create/download-link",
+            post(create_download_link),
+        )
         .layer(admin_cors_layer);
 
     let users_router = Router::new().route("/", get("A")).layer(users_cors_layer);

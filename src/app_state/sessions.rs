@@ -2,15 +2,13 @@ use std::collections::{HashMap, HashSet};
 
 use uuid::Uuid;
 
-use crate::app_state::link_config::LinkRoute;
-
 pub type Id = Uuid;
 //TODO think about this one pub type File = String;
 
 #[derive(Debug, Default)]
 pub struct Sessions {
     admins: HashSet<Id>,
-    users: HashMap<Id, LinkRoute>,
+    users: HashMap<Id, String>,
 }
 
 impl Sessions {
@@ -24,9 +22,9 @@ impl Sessions {
         self.admins.remove(&id); //FIXME Could maybe return the bool for info
     }
 
-    pub fn login_user(&mut self, link: LinkRoute) -> Uuid {
+    pub fn login_user(&mut self, url: String) -> Uuid {
         let uuid = Uuid::new_v4();
-        self.users.insert(uuid, link); //FIXME This could theoretacly already exist (Extremely unlikely but you can check)
+        self.users.insert(uuid, url); //FIXME This could theoretacly already exist (Extremely unlikely but you can check)
         uuid
     }
 
@@ -46,7 +44,7 @@ impl Sessions {
         }
     }
 
-    pub fn verify_user(&self, id: &Id) -> Option<LinkRoute> {
+    pub fn verify_user(&self, id: &Id) -> Option<String> {
         self.users.get(id).cloned()
     }
 }

@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>{{ title }}</title>
+        <title>Dashboard</title>
         <script src="https://unpkg.com/htmx.org"></script>
     </head>
     <body>
@@ -11,7 +11,39 @@
         <a href="/dashboard" hx-get="/dashboard" hx-target="body" hx-swap="innerHTML">Panel</a>
         </nav>
         <main>
-        {% block content %}{% endblock %}
+            <div class="new-link">
+                <div id="upload-link-create-form">
+                    <form 
+                        hx-post="/admin/dashboard/create/upload-link" 
+                        hx-swap="innerHTML" 
+                        hx-target="#result-div"
+                    >
+                        <input type="text" name="name" placeholder="Custom url">
+                        <input type="datetime-local" name="file_lifetime">
+                        <input type="text" name="password" placeholder="Password">
+                        <input type="datetime-local" name="expiration_date">
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+                <div id="sownload-link-create-form">
+                    <form 
+                        hx-post="/admin/dashboard/create/download-link" 
+                        hx-swap="innerHTML" 
+                        hx-target="#result-div"
+                    >
+                        <input type="text" name="name" placeholder="Custom url">
+                        <input type="text" name="file" placeholder="File">
+                        <input type="text" name="description" placeholder="Description">
+                        <input type="number" name="limited_uses" min="0" placeholder="Limited uses">
+                        <input type="datetime-local" name="expiration_date">
+                        <input type="text" name="password" placeholder="Password">
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+                <div id="result-div"></div>
+            </div>
+            <div class="links">
+            </div>
         </main>
     </body>
 </html>

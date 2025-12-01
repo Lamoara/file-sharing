@@ -58,4 +58,8 @@ impl AppData {
     pub fn remove_links() {}
     pub fn update_link() {}
     pub fn clean() {}
+
+    pub fn try_access(&self, url: &str, psw: &str) -> Result<(), ()> {
+        self.links.get(url).ok_or_else(|| ())?.try_access(psw)
+    }
 }

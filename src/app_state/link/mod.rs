@@ -11,6 +11,19 @@ pub enum Link {
     Upload(UploadLink),
 }
 
+impl Link {
+    fn config(&self) -> &LinkConfig {
+        match self {
+            Link::Download(download_link) => &download_link.config,
+            Link::Upload(upload_link) => &upload_link.config,
+        }
+    }
+
+    pub fn try_access(&self, psw: &str) -> Result<(), ()> {
+        self.config().try_access(psw)
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DownloadLink {
     file: String,

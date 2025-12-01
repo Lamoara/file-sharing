@@ -17,4 +17,15 @@ impl LinkConfig {
             expiration_date,
         }
     }
+
+    pub fn try_access(&self, psw: &str) -> Result<(), ()> {
+        if let Some(hashed_password) = &self.hashed_password {
+            match hasher::verify_hash(psw, hashed_password) {
+                true => Ok(()),
+                false => Err(()),
+            }
+        } else {
+            Ok(())
+        }
+    }
 }

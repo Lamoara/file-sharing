@@ -38,10 +38,7 @@ impl Sessions {
     }
 
     pub fn verify_admin(&self, id: &Id) -> Option<Id> {
-        match self.admins.contains(id) {
-            true => Some(id.clone()),
-            false => None,
-        }
+        self.admins.get(id).cloned()
     }
 
     pub fn verify_user(&self, id: &Id) -> Option<String> {

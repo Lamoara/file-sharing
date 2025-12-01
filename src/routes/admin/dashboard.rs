@@ -14,7 +14,10 @@ use crate::{
         AppState,
         link::{Link, UploadLink, link_config::LinkConfig},
     },
-    extractors::admin_auth_extractor::AdminAuthSessionExtractor,
+    extractors::{
+        admin_auth_extractor::AdminAuthSessionExtractor,
+        user_auth_extractor::UserAuthSessionExtractor,
+    },
 };
 
 #[derive(Template)]

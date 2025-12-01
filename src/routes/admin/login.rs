@@ -5,7 +5,7 @@ use axum::{
     Form,
     extract::State,
     http::{HeaderMap, HeaderValue},
-    response::{Html, IntoResponse},
+    response::{Html, IntoResponse, Response},
 };
 use axum_extra::extract::{
     CookieJar,
@@ -16,14 +16,13 @@ use serde::Deserialize;
 use crate::{app_state::AppState, localization::app_translator::AppTranslator};
 
 #[derive(Template)]
-#[template(path = "login.html")]
+#[template(path = "admin/login.html")]
 struct AdminLoginTemplate {
-    title: &'static str,
+    t: AppTranslator,
 }
 
-pub async fn login_page(translator: AppTranslator) -> Html<String> {
-    print!("{translator:?}");
-    let page = AdminLoginTemplate { title: "Login" };
+pub async fn login_page(t: AppTranslator) -> Html<String> {
+    let page = AdminLoginTemplate { t };
     Html(page.render().unwrap())
 }
 
@@ -52,7 +51,7 @@ pub async fn login_form(
     translator: AppTranslator,
     State(state): State<Arc<AppState>>,
     Form(form): Form<LoginForm>,
-) -> impl IntoResponse {
+) -> Response {
     match state.try_login(&form.username, &form.password).await {
         Ok(uuid) => {
             let cookie = Cookie::build(("session", uuid.to_string()))

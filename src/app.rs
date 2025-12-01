@@ -11,9 +11,12 @@ use tracing_subscriber::{EnvFilter, fmt, layer::SubscriberExt, util::SubscriberI
 
 use crate::{
     app_state::AppState,
-    routes::admin::{
-        dashboard::{create_download_link, create_upload_link, dashboard},
-        login::{login_form, login_page},
+    routes::{
+        admin::{
+            self,
+            dashboard::{create_download_link, create_upload_link, dashboard},
+        },
+        user::{self, load},
     },
 };
 
@@ -60,8 +63,8 @@ pub fn app() -> anyhow::Result<Router> {
     let app_state = Arc::new(AppState::load()?);
 
     let admin_router = Router::new()
-        .route("/", get(login_page))
-        .route("/login", post(login_form))
+        .route("/", get(admin::login::login_page))
+        .route("/login", post(admin::login::login_form))
         .route("/dashboard", get(dashboard))
         .route("/dashboard/create/upload-link", post(create_upload_link))
         .route(
@@ -70,11 +73,17 @@ pub fn app() -> anyhow::Result<Router> {
         )
         .layer(admin_cors_layer);
 
-    let users_router = Router::new().route("/", get("A")).layer(users_cors_layer);
+    let users_router = Router::new()
+        .route("/{file_url}", get(load))
+        .route(
+            "/{file_url}/login",
+            get(user::login::login_page).post(user::login::login_form),
+        )
+        .layer(users_cors_layer);
 
     Ok(Router::new()
         .nest("/admin", admin_router)
-        .merge(users_router)
+        .nest("/user", users_router)
         .layer(trace_layer)
         .with_state(app_state))
 }

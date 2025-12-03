@@ -11,6 +11,11 @@ pub enum Link {
     Upload(UploadLink),
 }
 
+pub enum LinkType {
+    Download,
+    Upload,
+}
+
 impl Link {
     fn config(&self) -> &LinkConfig {
         match self {
@@ -22,11 +27,21 @@ impl Link {
     pub fn try_access(&self, psw: &str) -> Result<(), ()> {
         self.config().try_access(psw)
     }
+
+    pub fn get_type(&self) -> LinkType {
+        match self {
+            Link::Download(_) => LinkType::Download,
+            Link::Upload(_) => LinkType::Upload,
+        }
+    }
+
+    pub fn get_filename(&self) -> &str {
+        &self.config().file_name
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DownloadLink {
-    file: String,
     description: Option<String>,
     limited_uses: Option<usize>,
     config: LinkConfig,
@@ -47,13 +62,11 @@ impl Link {
     }
 
     pub fn new_download(
-        file: String,
         description: Option<String>,
         limited_uses: Option<usize>,
         config: LinkConfig,
     ) -> Self {
         Link::Download(DownloadLink {
-            file,
             description,
             limited_uses,
             config,

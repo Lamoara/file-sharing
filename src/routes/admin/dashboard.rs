@@ -58,7 +58,8 @@ pub async fn create_upload_link(
             .and_utc()
     });
 
-    let link_config = LinkConfig::new(password, expiration_date);
+    //TODO make this file name dynamic
+    let link_config = LinkConfig::new(name.clone(), password, expiration_date);
     let link = Link::new_upload(file_lifetime, link_config);
 
     state.create_link(name, link).await.unwrap();
@@ -91,8 +92,8 @@ pub async fn create_download_link(
             .and_utc()
     });
 
-    let link_config = LinkConfig::new(password, expiration_date);
-    let link = Link::new_download(file, description, limited_uses, link_config);
+    let link_config = LinkConfig::new(Some(file), password, expiration_date);
+    let link = Link::new_download(description, limited_uses, link_config);
 
     state.create_link(name, link).await.unwrap();
 }

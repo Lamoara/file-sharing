@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Upload</h1>
+<div>
+    <form
+        id="upload-form"
+        hx-post="{{url}}/upload"
+        hx-target="#result-div"
+        hx-swap="innerHTML"
+        enctype="multipart/form-data"
+    >
+        <div>
+            <label>Descripción:</label>
+            <input type="text" name="description" placeholder="Ej. archivo de prueba">
+        </div>
+        <div>
+            <label>Archivo:</label>
+            <input type="file" name="file1">
+        </div>
+        <button type="submit">Subir</button>
+    </form>
+    <div id="result-div"></div>
+</div>
+{% endblock %}

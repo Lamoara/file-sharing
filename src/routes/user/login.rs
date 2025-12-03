@@ -2,7 +2,10 @@ use std::sync::Arc;
 
 use askama::Template;
 use axum::{
-    Form, extract::{Path, Query, State}, http::{HeaderMap, HeaderValue, StatusCode}, response::{Html, IntoResponse, Response}
+    Form,
+    extract::{Path, Query, State},
+    http::{HeaderMap, HeaderValue, StatusCode},
+    response::{Html, IntoResponse, Response},
 };
 use serde::Deserialize;
 
@@ -22,11 +25,14 @@ pub struct LoginPath {
 #[template(path = "user/login.html")]
 struct UserLoginTemplate<'a> {
     t: AppTranslator,
-    url: &'a str
+    url: &'a str,
 }
 
-pub async fn login_page(t: AppTranslator, Path(path): Path<LoginPath>,) -> Html<String> {
-    let page = UserLoginTemplate { t, url: &path.file_url };
+pub async fn login_page(t: AppTranslator, Path(path): Path<LoginPath>) -> Html<String> {
+    let page = UserLoginTemplate {
+        t,
+        url: &path.file_url,
+    };
     Html(page.render().unwrap())
 }
 
@@ -73,8 +79,12 @@ pub async fn login_form(
             let jar = jar.add(cookie);
 
             let mut headers = HeaderMap::new();
+            let redirect_header = match HeaderValue::from_str(&format!("../{url}")) {
+                Ok(h) => h,
+                Err(_) => return invalid_credentials(t).into_response(),
+            };
 
-            headers.insert("HX-Redirect", HeaderValue::from_static("../"));
+            headers.insert("HX-Redirect", redirect_header);
 
             (headers, jar).into_response()
         }

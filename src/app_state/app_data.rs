@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use tracing::{debug, info};
 use uuid::Uuid;
 
-use crate::app_state::link::Link;
+use crate::app_state::link::{Link, LinkType};
 
 static APP_DATA_ROUTE: &str = "app_data.json";
 
@@ -53,6 +53,21 @@ impl AppData {
         self.links.insert(route, Arc::new(link)); //TODO! Make proper errors
         self.save().unwrap(); //TODO! Make proper errors
         Ok(())
+    }
+
+    pub fn get_link_type(&self, link_route: &str) -> Option<LinkType> {
+        match self.links.get(link_route) {
+            Some(link) => Some(link.get_type()),
+            None => None,
+        }
+    }
+
+    pub fn get_link_filename(&self, link_route: &str) -> Option<&str> {
+        let Some(link) = self.links.get(link_route) else {
+            return None;
+        };
+
+        Some(link.get_filename())
     }
     pub fn remove_link() {}
     pub fn remove_links() {}

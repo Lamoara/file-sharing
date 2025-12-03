@@ -1,9 +1,7 @@
 use std::sync::Arc;
 
 use axum::{
-    Router,
-    http::{HeaderValue, Method, header},
-    routing::{get, post},
+    Router, extract::DefaultBodyLimit, http::{HeaderValue, Method, header}, routing::{get, post}
 };
 use dotenvy::var;
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
@@ -16,7 +14,7 @@ use crate::{
             self,
             dashboard::{create_download_link, create_upload_link, dashboard},
         },
-        user::{self, load},
+        user::{self, download::download, load, upload::upload},
     },
 };
 
@@ -73,12 +71,17 @@ pub fn app() -> anyhow::Result<Router> {
         )
         .layer(admin_cors_layer);
 
+    let request_limit = DefaultBodyLimit::disable(); //TODO Make this dynamic with link config
+
     let users_router = Router::new()
         .route("/{file_url}", get(load))
         .route(
             "/{file_url}/login",
             get(user::login::login_page).post(user::login::login_form),
         )
+        .route("/{file_url}/upload", post(upload))
+        .route("/{file_url}/download", get(download))
+        .layer(request_limit)
         .layer(users_cors_layer);
 
     Ok(Router::new()

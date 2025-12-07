@@ -15,7 +15,7 @@ static APP_DATA_ROUTE: &str = "app_data.json";
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AppData {
     links: HashMap<String, Arc<Link>>,
-    files: HashSet<String>,
+    files: HashMap<String, String>, //Filename, original name
 }
 
 impl AppData {
@@ -50,6 +50,9 @@ impl AppData {
 
     pub fn add_link(&mut self, link_route: Option<String>, link: Link) -> Result<(), ()> {
         let route = link_route.unwrap_or_else(|| Uuid::new_v4().to_string());
+        if link.get_type() == LinkType::Upload {
+            self.files.insert(link.get_filename().into(), "".into());
+        }
         self.links.insert(route, Arc::new(link)); //TODO! Make proper errors
         self.save().unwrap(); //TODO! Make proper errors
         Ok(())
@@ -69,6 +72,16 @@ impl AppData {
 
         Some(link.get_filename())
     }
+
+    pub fn save_file_original_name(&mut self, filename: &str, original_name: &str) {
+        self.files.insert(filename.to_string(), original_name.to_string());
+        self.save().unwrap()
+    }
+
+    pub fn get_original_name(&self, filename: &str) -> Option<&String> {
+        self.files.get(filename)
+    }
+
     pub fn remove_link() {}
     pub fn remove_links() {}
     pub fn update_link() {}

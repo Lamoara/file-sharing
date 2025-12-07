@@ -58,7 +58,6 @@ pub async fn create_upload_link(
             .and_utc()
     });
 
-    //TODO make this file name dynamic
     let link_config = LinkConfig::new(name.clone(), password, expiration_date);
     let link = Link::new_upload(file_lifetime, link_config);
 

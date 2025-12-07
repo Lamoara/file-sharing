@@ -11,6 +11,7 @@ pub enum Link {
     Upload(UploadLink),
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum LinkType {
     Download,
     Upload,

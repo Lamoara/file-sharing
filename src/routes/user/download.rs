@@ -20,6 +20,7 @@ pub async fn download(
     let url = path.file_url;
     let app_data = state.data.read().await;
     let name = app_data.get_link_filename(&url).unwrap();
+    let original_name = app_data.get_original_name(name).unwrap();
 
     let file = match File::open(name).await {
         Ok(file) => file,
@@ -32,7 +33,7 @@ pub async fn download(
     let mut headers= HeaderMap::new();
     headers.insert(header::CONTENT_TYPE, HeaderValue::from_static("text/toml"));
 
-    let content_disposition_value = HeaderValue::from_str(&format!("attachment; filename={name}")).unwrap();
+    let content_disposition_value = HeaderValue::from_str(&format!("attachment; filename={original_name}")).unwrap();
     headers.insert(header::CONTENT_DISPOSITION, content_disposition_value);
 
     (headers, body).into_response()

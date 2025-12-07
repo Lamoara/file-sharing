@@ -17,10 +17,19 @@ pub async fn upload(
     mut multipart: Multipart,
 ) {
     let url = path.file_url;
-    let app_data = state.data.read().await;
-    let name = app_data.get_link_filename(&url).unwrap();
-    while let Some(field) = multipart.next_field().await.unwrap() {
-        let data = field.bytes().await.unwrap();
-        fs::write(name, data).unwrap();
+    let name;
+    {
+        let app_data = state.data.read().await;
+        name = app_data.get_link_filename(&url).unwrap().to_string();
     }
+    while let Some(field) = multipart.next_field().await.unwrap() {
+        if let Some(original_name) = field.file_name() {
+            println!("Selecting name file_name(): {original_name}");
+            state.data.write().await.save_file_original_name(&name, original_name);
+        }
+        let data = field.bytes().await.unwrap();
+        fs::write(&name, data).unwrap();
+    }
+
+    println!("Finished uploading");
 }

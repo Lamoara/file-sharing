@@ -78,8 +78,8 @@ impl AppData {
         self.save().unwrap()
     }
 
-    pub fn get_original_name(&self, filename: &str) -> Option<&String> {
-        self.files.get(filename)
+    pub fn get_original_name(&self, filename: &str) -> Option<&str> {
+        self.files.get(filename).map(|x| x.as_str())
     }
 
     pub fn remove_link() {}

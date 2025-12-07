@@ -24,7 +24,6 @@ pub async fn upload(
     }
     while let Some(field) = multipart.next_field().await.unwrap() {
         if let Some(original_name) = field.file_name() {
-            println!("Selecting name file_name(): {original_name}");
             state.data.write().await.save_file_original_name(&name, original_name);
         }
         let data = field.bytes().await.unwrap();

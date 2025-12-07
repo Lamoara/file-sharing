@@ -20,7 +20,7 @@ pub async fn download(
     let url = path.file_url;
     let app_data = state.data.read().await;
     let name = app_data.get_link_filename(&url).unwrap();
-    let original_name = app_data.get_original_name(name).unwrap();
+    let original_name = app_data.get_original_name(name).unwrap_or("downloadedFile");
 
     let file = match File::open(name).await {
         Ok(file) => file,
